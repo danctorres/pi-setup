@@ -8,7 +8,7 @@ Full write-up and test results: https://claude.ai/code/artifact/fa2d0ccf-8700-40
 ## New machine
 
 ```sh
-git clone <this repo> ~/repos/pi-setup && ~/repos/pi-setup/install.sh
+git clone https://github.com/danctorres/pi-setup ~/repos/pi-setup && ~/repos/pi-setup/install.sh
 ```
 
 Needs `npm`, `jq` and `cargo` first. Then log pi in to your providers, and link the panes plugin:
