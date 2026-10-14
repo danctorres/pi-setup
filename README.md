@@ -34,6 +34,7 @@ Then `/opsx-propose <change>`, `/opsx-apply`, `/opsx-verify`, `/opsx-archive`.
 | `bin/pi-model-sync` | writes modelcmp's pick per role into `.pi/settings.json`; roles from `.pi/subagent-models` when present |
 | `bin/pi-pane` | starts a full pi in a new herdr pane on modelcmp's pick and prints its answer |
 | `workflows/scout-review.js` | scout maps a target, reviewer critiques it |
+| `workflows/build-review.js` | any change, args `{task}`: worker builds, reviewer returns PASS or FAIL |
 | `workflows/opsx-apply.js` | one OpenSpec task group: worker builds, reviewer returns PASS or FAIL |
 
 Not yet proven end to end: `pi-pane`'s answer round trip and the reviewer step of `opsx-apply.js`.
