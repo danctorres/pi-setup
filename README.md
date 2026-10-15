@@ -29,6 +29,39 @@ pi --approve       # start the lead, inside herdr
 
 Then `/opsx-propose <change>`, `/opsx-apply`, `/opsx-verify`, `/opsx-archive`.
 
+To run a workflow, ask the lead to call the subagent tool with it, e.g.
+"run `./workflows/build-review.js` with args `{task: \"add a --dry-run flag\"}`".
+
+## Subagents
+
+From pi-subagents (`~/.pi/agent/npm/node_modules/pi-subagents/agents/`). `pi-model-sync` sets the
+first four to modelcmp's pick; the rest keep their defaults.
+
+| Agent | Role | Model (task/tier) |
+|---|---|---|
+| `scout` | fast codebase recon, compressed context for handoff | value/low |
+| `worker` | implements changes | coding/mid |
+| `reviewer` | read-only review of diffs, plans, PRs; P0/P1/P2 findings and a merge verdict | reasoning/high |
+| `oracle` | keeps decisions consistent with what came before | reasoning/high |
+| `researcher` | web research brief | default |
+| `evidence-auditor` | checks research claims against their sources | default |
+| `delegate` | lightweight, inherits the lead's model | lead's |
+| `claude-code`, `codex-exec`, `cursor-agent` | that CLI, read-only; `-writer` variants may edit | that CLI's |
+
+pi-subagents also ships prompts: `/parallel-review`, `/review-loop`, `/parallel-research`,
+`/parallel-cleanup`, `/council`, `/gather-context-and-clarify`.
+
+## Reviewing someone else's PR
+
+```sh
+gh pr checkout 123
+gh pr diff 123 > /tmp/pr-123.diff
+```
+
+Then in pi: `/parallel-review PR 123, diff at /tmp/pr-123.diff`. The reviewer can't run git and its
+diff tool only sees uncommitted changes, so it needs the diff as a file; the checkout lets it read
+the surrounding code.
+
 | File | What it is |
 |---|---|
 | `bin/pi-model-sync` | writes modelcmp's pick per role into `.pi/settings.json`; roles from `.pi/subagent-models` when present |
