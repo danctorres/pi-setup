@@ -3,7 +3,8 @@
 Use the [pi](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) coding agent as a lead
 that hands work out instead of doing it all itself. You talk to one pi session, the **lead**. It
 gives coding to a **worker** subagent, and a **reviewer** subagent on a *different* model checks the
-result before it counts as done, so one model's blind spots don't go unchecked.
+result before it counts as done, so one model's blind spots don't go unchecked. The lead then runs
+the tests itself, since the reviewer only reads code.
 
 What's in here, and what does what:
 
@@ -70,7 +71,9 @@ This:
 - writes each subagent's model into `.pi/settings.json` (see [Models](#models))
 
 Commit `openspec/`, `.pi/skills/`, OpenSpec's `.pi/prompts/opsx-*.md` and `.gitignore`. Everyone else on
-the repo runs `init-repo.sh` once to get their own links and models.
+the repo runs `init-repo.sh` once to get their own links and models. Leave `.pi/settings.json` out of git
+(add it to `.gitignore`) unless everyone logs in to the same providers: it holds the models picked for your
+logins, and each person's `pi-model-sync` would overwrite it.
 
 ## Use
 
@@ -126,7 +129,7 @@ surrounding code.
 
 ### pi-pane
 
-Needs herdr (`HERDR_ENV=1`). From a shell inside herdr:
+Needs herdr or neoherdr. From a shell inside one of them:
 
 ```sh
 pi-pane build coding mid task.md     # name, modelcmp task, tier, prompt file (or - for stdin)
@@ -134,7 +137,7 @@ pi-pane build coding mid task.md     # name, modelcmp task, tier, prompt file (o
 
 It opens a pane to the right with a full pi on modelcmp's pick for that task and tier, sends the prompt,
 waits up to 10 minutes (`PI_PANE_TIMEOUT`) and prints the answer. The pane stays open so you can keep
-talking to it.
+talking to it, by typing in it or with `neoherdr agent prompt build "..." --wait` (`herdr` under herdr).
 
 ## Models
 
@@ -170,6 +173,8 @@ Repos pick up changes to existing workflows and prompts straight away, since the
 
 - **"Third-party apps now draw from your extra usage"**: a subagent's model goes through a Claude
   subscription login. Log in with an API key or OpenRouter instead, then run `pi-model-sync`.
+- **`pi-model-sync: worker and reviewer are both …`**: your logins only reach one good model, so the review
+  is not a second opinion. Log in to another provider (OpenRouter is the quick way) and run `pi-model-sync`.
 - **`pi-model-sync: no … model on pi`**: none of your logins reach a model for that task and tier, so that
   subagent keeps its default model. Log in to another provider or change the tier in `.pi/subagent-models`.
 - **`/build-review` or the `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run `init-repo.sh` in

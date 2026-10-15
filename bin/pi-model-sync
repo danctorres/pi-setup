@@ -18,3 +18,5 @@ echo "$roles" | while read -r role task tier; do
   jq --arg r "$role" --arg m "$id" '.subagents.agentOverrides[$r].model = $m' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
   echo "$role  $task/$tier  $id"
 done
+w=$(jq -r '.subagents.agentOverrides.worker.model // empty' "$f") r=$(jq -r '.subagents.agentOverrides.reviewer.model // empty' "$f")
+[ -z "$w" ] || [ "$w" != "$r" ] || echo "pi-model-sync: worker and reviewer are both $w; log in to another provider or pin one in $f so the review is a second opinion" >&2

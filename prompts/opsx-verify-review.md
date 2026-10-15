@@ -4,5 +4,6 @@ argument-hint: "<change>"
 ---
 Verify the OpenSpec change "$1" before it is archived. Do not check the code yourself: call the subagent
 tool with workflow "./workflows/opsx-verify.js", args {change: "$1"} and async false. Then give the
-verdict and every finding it returns, grouped by P0, P1 and P2. If the verdict is FAIL, say the change
-is not ready to archive.
+verdict and every finding it returns, grouped by P0, P1 and P2. Then run the project's tests yourself (the
+reviewer cannot); a failing test counts as P0. If the verdict is FAIL or a test fails, say the change is
+not ready to archive.
