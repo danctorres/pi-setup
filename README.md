@@ -163,6 +163,7 @@ pi-pane build coding mid task.md     # name, modelcmp task, tier, prompt file (o
 It opens a pane to the right with a full pi on modelcmp's pick for that task and tier, sends the prompt,
 waits up to 10 minutes (`PI_PANE_TIMEOUT`) and prints the answer. The pane stays open so you can keep
 talking to it, by typing in it or with `neoherdr agent prompt build "..." --wait` (`herdr` under herdr).
+Its session is saved like any other pi session, so `/resume` in that repo finds it after the pane is closed.
 
 ## Models
 
