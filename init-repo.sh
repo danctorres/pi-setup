@@ -4,6 +4,10 @@ set -eu
 here=$(cd "$(dirname "$0")" && pwd)
 [ -d openspec ] || openspec init --tools pi .
 mkdir -p workflows .pi/prompts
+# Drop links to workflows and prompts this checkout no longer has.
+for l in workflows/* .pi/prompts/*; do
+  [ -L "$l" ] && [ ! -e "$l" ] && case $(readlink "$l") in "$here"/*) rm "$l" ;; esac
+done
 ln -sf "$here"/workflows/*.js workflows/
 ln -sf "$here"/prompts/*.md .pi/prompts/
 # The links point into this checkout, so keep them out of the repo's history.
