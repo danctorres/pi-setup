@@ -1,10 +1,11 @@
 #!/bin/sh
-# Per-repo setup, run inside the repo: OpenSpec for pi, the workflows, the apply guidance, the models.
+# Per-repo setup, run inside the repo: OpenSpec for pi, the workflows, /opsx-verify-review, the apply guidance, the models.
 set -eu
 here=$(cd "$(dirname "$0")" && pwd)
 [ -d openspec ] || openspec init --tools pi .
-mkdir -p workflows
+mkdir -p workflows .pi/prompts
 ln -sf "$here"/workflows/*.js workflows/
+ln -sf "$here"/prompts/*.md .pi/prompts/
 grep -q '^operations:' openspec/config.yaml || cat >> openspec/config.yaml <<'Y'
 
 operations:

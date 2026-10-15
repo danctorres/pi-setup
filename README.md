@@ -27,7 +27,7 @@ pi-model-sync      # refresh the models when prices or benchmarks move
 pi --approve       # start the lead, inside herdr
 ```
 
-Then `/opsx-propose <change>`, `/opsx-apply`, `/opsx-verify`, `/opsx-archive`.
+Then `/opsx-propose <change>`, `/opsx-apply`, `/opsx-verify-review <change>`, `/opsx-archive`.
 
 To run a workflow, ask the lead to call the subagent tool with it, e.g.
 "run `./workflows/build-review.js` with args `{task: \"add a --dry-run flag\"}`".
@@ -69,5 +69,7 @@ the surrounding code.
 | `workflows/scout-review.js` | scout maps a target, reviewer critiques it |
 | `workflows/build-review.js` | any change, args `{task}`: worker builds, reviewer returns PASS or FAIL |
 | `workflows/opsx-apply.js` | one OpenSpec task group: worker builds, reviewer returns PASS or FAIL |
+| `workflows/opsx-verify.js` | a finished OpenSpec change, args `{change}`: reviewer checks code against the artifacts, PASS or FAIL |
+| `prompts/opsx-verify-review.md` | `/opsx-verify-review <change>`: runs `opsx-verify.js`, use it in place of `/opsx-verify` |
 
-Not yet proven end to end: `pi-pane`'s answer round trip and the reviewer step of `opsx-apply.js`.
+Not yet proven end to end: `pi-pane`'s answer round trip, the reviewer step of `opsx-apply.js`, and `opsx-verify.js`.
