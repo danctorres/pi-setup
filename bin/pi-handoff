@@ -7,13 +7,14 @@ set -eu
 h=${HERDR_BIN_PATH:-herdr}   # the herdr or neoherdr binary running this pane
 [ $# -eq 4 ] || { sed -n '2,4s/^# \{0,1\}//p' "$0" >&2; exit 1; }
 name=$1 prompt=$(cat "$4")
+! "$h" agent get "$name" >/dev/null 2>&1 || { echo "pi-handoff: $name is already running; pick another name, or send it more with \`${h##*/} agent prompt $name \"...\" --wait\`" >&2; exit 1; }
 model=$(modelcmp list --task "$2" --tier "$3" --via pi --id 2>/dev/null | head -1)
 [ -n "$model" ] || { echo "pi-handoff: modelcmp has no $2 $3 model on pi" >&2; exit 1; }
 pane=$("$h" pane split --current --direction right --cwd "$PWD" --no-focus | jq -r .result.pane.pane_id)
 id=pi-handoff-$name-$(date +%s)   # a known session id, so the answer can be read from its session file
 "$h" agent start "$name" --kind pi --pane "$pane" --timeout 60000 -- --model "$model" --session-id "$id" >/dev/null
 echo "pi-handoff: $name on $model in pane $pane" >&2
-send() { "$h" agent prompt "$name" "$prompt" --wait --timeout "${PI_PANE_TIMEOUT:-600000}" >/dev/null 2>&1; }
+send() { "$h" agent prompt "$name" "$prompt" --wait --timeout "${PI_HANDOFF_TIMEOUT:-600000}" >/dev/null 2>&1; }
 # ponytail: a pi that is still drawing its start-up notices drops the first prompt, so send once more.
 # If herdr ever reports a stall after delivering, this sends the task twice: check the pane first then.
 send || { sleep 2; send; } || { echo "pi-handoff: $name did not answer in time, see pane $pane" >&2; exit 1; }
