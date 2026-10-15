@@ -1,22 +1,22 @@
 #!/bin/sh
 # Start an interactive pi in a new herdr/neoherdr pane on the model modelcmp picks, hand it a task, print its answer.
-#   pi-pane <name> <task> <tier> <prompt-file|->     e.g.  pi-pane build coding mid task.md
+#   pi-handoff <name> <task> <tier> <prompt-file|->     e.g.  pi-handoff build coding mid task.md
 # The pane stays open: type into it, or send more with `herdr agent prompt <name> "..." --wait`.
 set -eu
-[ "${HERDR_ENV:-}" = 1 ] || { echo "pi-pane: not inside herdr or neoherdr" >&2; exit 1; }
+[ "${HERDR_ENV:-}" = 1 ] || { echo "pi-handoff: not inside herdr or neoherdr" >&2; exit 1; }
 h=${HERDR_BIN_PATH:-herdr}   # the herdr or neoherdr binary running this pane
 [ $# -eq 4 ] || { sed -n '2,4s/^# \{0,1\}//p' "$0" >&2; exit 1; }
 name=$1 prompt=$(cat "$4")
 model=$(modelcmp list --task "$2" --tier "$3" --via pi --id 2>/dev/null | head -1)
-[ -n "$model" ] || { echo "pi-pane: modelcmp has no $2 $3 model on pi" >&2; exit 1; }
+[ -n "$model" ] || { echo "pi-handoff: modelcmp has no $2 $3 model on pi" >&2; exit 1; }
 pane=$("$h" pane split --current --direction right --cwd "$PWD" --no-focus | jq -r .result.pane.pane_id)
-id=pi-pane-$name-$(date +%s)   # a known session id, so the answer can be read from its session file
+id=pi-handoff-$name-$(date +%s)   # a known session id, so the answer can be read from its session file
 "$h" agent start "$name" --kind pi --pane "$pane" --timeout 60000 -- --model "$model" --session-id "$id" >/dev/null
-echo "pi-pane: $name on $model in pane $pane" >&2
+echo "pi-handoff: $name on $model in pane $pane" >&2
 send() { "$h" agent prompt "$name" "$prompt" --wait --timeout "${PI_PANE_TIMEOUT:-600000}" >/dev/null 2>&1; }
 # ponytail: a pi that is still drawing its start-up notices drops the first prompt, so send once more.
 # If herdr ever reports a stall after delivering, this sends the task twice: check the pane first then.
-send || { sleep 2; send; } || { echo "pi-pane: $name did not answer in time, see pane $pane" >&2; exit 1; }
+send || { sleep 2; send; } || { echo "pi-handoff: $name did not answer in time, see pane $pane" >&2; exit 1; }
 # The pane holds pi's whole screen; the session file has just the last reply.
 f=$(find "${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/sessions" -name "*_$id.jsonl" 2>/dev/null | head -1)
 if [ -n "$f" ]; then

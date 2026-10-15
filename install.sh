@@ -15,8 +15,10 @@ jq --arg w "$w" '.subagents.defaultSubagentOnlyExtensions = ((.subagents.default
 command -v modelcmp >/dev/null || cargo install --locked --git https://github.com/danctorres/modelcmp
 command -v openspec >/dev/null || npm i -g @fission-ai/openspec
 mkdir -p ~/.local/bin
-ln -sf "$here/bin/pi-model-sync" "$here/bin/pi-pane" ~/.local/bin/
-# Lets herdr/neoherdr tell when pi is working or idle, which pi-pane waits on. Both share the one pi extension.
+ln -sf "$here/bin/pi-model-sync" "$here/bin/pi-handoff" ~/.local/bin/
+# pi-handoff used to be called pi-pane; drop the old link.
+[ "$(readlink ~/.local/bin/pi-pane)" != "$here/bin/pi-pane" ] || rm ~/.local/bin/pi-pane
+# Lets herdr/neoherdr tell when pi is working or idle, which pi-handoff waits on. Both share the one pi extension.
 if h=$(command -v neoherdr || command -v herdr); then
   "$h" integration install pi
 else

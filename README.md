@@ -28,7 +28,7 @@ What's in here, and what does what:
 | Make a change with reviews and fixes, no plan | `/review-loop add a --dry-run flag` (see [Changes without a plan](#changes-without-a-plan)) |
 | Review a commit, a branch or a PR | `/review-diff PR 123` (see [Reviewing changes](#reviewing-changes)) |
 | Research a question, clean up code, get several opinions | `/parallel-research`, `/parallel-cleanup`, `/council` |
-| Hand one task to a separate, visible pi session | `pi-pane` in a shell (see [pi-pane](#pi-pane)) |
+| Hand one task to a separate, visible pi session | `pi-handoff` in a shell (see [pi-handoff](#pi-handoff)) |
 
 ## Install (once per machine)
 
@@ -41,7 +41,7 @@ git clone https://github.com/danctorres/pi-setup ~/repos/pi-setup
 
 You can clone it anywhere; the commands below assume `~/repos/pi-setup`. `install.sh` installs pi,
 pi-subagents, pi-web-access, modelcmp and OpenSpec if they are missing, sets every subagent to load
-pi-web-access's web tools, and puts `pi-model-sync` and `pi-pane` in
+pi-web-access's web tools, and puts `pi-model-sync` and `pi-handoff` in
 `~/.local/bin` (make sure that's on your `PATH`). It is safe to run again.
 
 **Log in to a model provider.** Start `pi` and run `/login`. Use an API key, or an
@@ -51,7 +51,7 @@ has extra usage. The setup works best when you can reach models from more than o
 reviewer can be a different model from the worker.
 
 **Optional, to watch subagents in panes:** build neoherdr and link its plugin, then run `install.sh` again
-so it can install the pi integration (herdr works too, for `pi-pane`).
+so it can install the pi integration (herdr works too, for `pi-handoff`).
 
 ```sh
 git clone https://github.com/danctorres/neoherdr ~/repos/neoherdr
@@ -152,12 +152,12 @@ they see today's code rather than that commit's.
 
 To review a worktree, start pi inside it and run `/review-diff`.
 
-### pi-pane
+### pi-handoff
 
 Needs herdr or neoherdr. From a shell inside one of them:
 
 ```sh
-pi-pane build coding mid task.md     # name, modelcmp task, tier, prompt file (or - for stdin)
+pi-handoff build coding mid task.md     # name, modelcmp task, tier, prompt file (or - for stdin)
 ```
 
 It opens a pane to the right with a full pi on modelcmp's pick for that task and tier, sends the prompt,
