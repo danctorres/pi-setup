@@ -7,6 +7,7 @@ mkdir -p workflows .pi/prompts
 ln -sf "$here"/workflows/*.js workflows/
 ln -sf "$here"/prompts/*.md .pi/prompts/
 # The links point into this checkout, so keep them out of the repo's history.
+[ ! -s .gitignore ] || [ -z "$(tail -c1 .gitignore)" ] || echo >> .gitignore
 for l in "$here"/workflows/*.js "$here"/prompts/*.md; do
   case $l in */workflows/*) l=workflows/${l##*/} ;; *) l=.pi/prompts/${l##*/} ;; esac
   grep -qxF "$l" .gitignore 2>/dev/null || echo "$l" >> .gitignore

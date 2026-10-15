@@ -6,7 +6,7 @@ set -eu
 f=${1:-.pi/settings.json}
 mkdir -p "$(dirname "$f")"
 [ -s "$f" ] || echo '{}' > "$f"
-if [ -f .pi/subagent-models ]; then roles=$(grep '^[a-z]' .pi/subagent-models); else roles='scout value low
+if [ -f .pi/subagent-models ]; then roles=$(grep '^[a-z]' .pi/subagent-models) || { echo "pi-model-sync: no roles in .pi/subagent-models" >&2; exit 1; }; else roles='scout value low
 worker coding mid
 reviewer reasoning high
 oracle reasoning high
