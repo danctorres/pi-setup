@@ -21,7 +21,7 @@ What's in here, and what does what:
 |---|---|
 | Plan a change, then have it built and reviewed task group by task group | `/opsx-propose <change>`, then `/opsx-apply-review <change>` |
 | Check a finished change against its plan before closing it | `/opsx-verify-review <change>`, then `/opsx-archive` |
-| Make a small change with a review, no plan | ask: run `./workflows/build-review.js` with args `{task: "add a --dry-run flag"}` |
+| Make a small change with a review, no plan | `/build-review add a --dry-run flag` |
 | Review a PR, yours or someone else's | `/parallel-review` (see [Reviewing a PR](#reviewing-a-pr)) |
 | Research a question, clean up code, get several opinions | `/parallel-research`, `/parallel-cleanup`, `/council` |
 | Hand one task to a separate, visible pi session | `pi-pane` in a shell (see [pi-pane](#pi-pane)) |
@@ -102,12 +102,13 @@ New to OpenSpec? `/opsx-onboard` walks you through one full cycle.
 
 ### Workflows
 
-A workflow is a short script that runs subagents in a fixed order. Ask the lead to run one, e.g.
-"run `./workflows/build-review.js` with args `{task: "add a --dry-run flag"}`".
+A workflow is a short script that runs subagents in a fixed order. The `/build-review`,
+`/opsx-apply-review` and `/opsx-verify-review` prompts run them for you. To run one directly, ask the
+lead, e.g. "run `./workflows/scout-review.js` with args `{target: "src"}`".
 
 | Workflow | Args | What it does |
 |---|---|---|
-| `build-review.js` | `{task}` | worker makes the change and runs the tests, reviewer returns PASS or FAIL |
+| `build-review.js` | `{task}` | worker makes the change and runs the tests, reviewer returns PASS or FAIL; used by `/build-review` |
 | `opsx-apply.js` | `{change, group}` | one OpenSpec task group, used by `/opsx-apply-review` |
 | `opsx-verify.js` | `{change}` | whole-change check, used by `/opsx-verify-review` |
 | `scout-review.js` | `{target}` | scout summarises a folder, reviewer says what it missed; a quick check that your setup works |
@@ -171,6 +172,6 @@ Repos pick up changes to existing workflows and prompts straight away, since the
   subscription login. Log in with an API key or OpenRouter instead, then run `pi-model-sync`.
 - **`pi-model-sync: no … model on pi`**: none of your logins reach a model for that task and tier, so that
   subagent keeps its default model. Log in to another provider or change the tier in `.pi/subagent-models`.
-- **The `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run `init-repo.sh` in
+- **`/build-review` or the `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run `init-repo.sh` in
   that repo.
 - **A workflow says it needs args**: pass them as shown in the [Workflows](#workflows) table.
