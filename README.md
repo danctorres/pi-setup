@@ -72,4 +72,5 @@ the surrounding code.
 | `workflows/opsx-verify.js` | a finished OpenSpec change, args `{change}`: reviewer checks code against the artifacts, PASS or FAIL |
 | `prompts/opsx-verify-review.md` | `/opsx-verify-review <change>`: runs `opsx-verify.js`, use it in place of `/opsx-verify` |
 
-Not yet proven end to end: `pi-pane`'s answer round trip, the reviewer step of `opsx-apply.js`, and `opsx-verify.js`.
+Known gap: `/opsx-apply` treats the `operations.apply.guidance` from `init-repo.sh` as optional advice and
+implements the tasks itself. To get worker + reviewer per group, ask the lead to run `opsx-apply.js` per group.

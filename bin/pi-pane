@@ -15,4 +15,4 @@ send() { herdr agent prompt "$name" "$prompt" --wait --timeout "${PI_PANE_TIMEOU
 # ponytail: a pi that is still drawing its start-up notices drops the first prompt, so send once more.
 # If herdr ever reports a stall after delivering, this sends the task twice: check the pane first then.
 send || { sleep 2; send; }
-herdr agent read "$name" --source recent-unwrapped --lines 200 | jq -r '.result.read.text // .'
+herdr agent read "$name" --source recent-unwrapped --lines 200
