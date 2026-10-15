@@ -9,7 +9,9 @@ mkdir -p "$(dirname "$f")"
 if [ -f .pi/subagent-models ]; then roles=$(grep '^[a-z]' .pi/subagent-models); else roles='scout value low
 worker coding mid
 reviewer reasoning high
-oracle reasoning high'; fi
+oracle reasoning high
+researcher agentic mid
+evidence-auditor reasoning mid'; fi
 echo "$roles" | while read -r role task tier; do
   id=$(modelcmp list --task "$task" --tier "$tier" --via pi --id 2>/dev/null | head -1)
   if [ -z "$id" ]; then echo "pi-model-sync: no $task $tier model on pi, $role keeps its model" >&2; continue; fi

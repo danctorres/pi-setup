@@ -35,7 +35,7 @@ To run a workflow, ask the lead to call the subagent tool with it, e.g.
 ## Subagents
 
 From pi-subagents (`~/.pi/agent/npm/node_modules/pi-subagents/agents/`). `pi-model-sync` sets the
-first four to modelcmp's pick; the rest keep their defaults.
+first six to modelcmp's pick; the rest keep their defaults.
 
 | Agent | Role | Model (task/tier) |
 |---|---|---|
@@ -43,8 +43,8 @@ first four to modelcmp's pick; the rest keep their defaults.
 | `worker` | implements changes | coding/mid |
 | `reviewer` | read-only review of diffs, plans, PRs; P0/P1/P2 findings and a merge verdict | reasoning/high |
 | `oracle` | keeps decisions consistent with what came before | reasoning/high |
-| `researcher` | web research brief | default |
-| `evidence-auditor` | checks research claims against their sources | default |
+| `researcher` | web research brief | agentic/mid |
+| `evidence-auditor` | checks research claims against their sources | reasoning/mid |
 | `delegate` | lightweight, inherits the lead's model | lead's |
 | `claude-code`, `codex-exec`, `cursor-agent` | that CLI, read-only; `-writer` variants may edit | that CLI's |
 
