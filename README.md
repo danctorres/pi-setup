@@ -9,6 +9,8 @@ the tests itself, since the reviewer only reads code.
 What's in here, and what does what:
 
 - [pi-subagents](https://www.npmjs.com/package/pi-subagents) runs the subagents (worker, reviewer, scout, …).
+- [pi-web-access](https://www.npmjs.com/package/pi-web-access) gives the `researcher` and `evidence-auditor`
+  subagents web search and page fetching, with no API key needed.
 - [modelcmp](https://github.com/danctorres/modelcmp) picks each subagent's model from current prices
   and benchmarks, out of the models your pi logins can reach.
 - [OpenSpec](https://www.npmjs.com/package/@fission-ai/openspec) makes bigger changes plan-first: a
@@ -22,6 +24,7 @@ What's in here, and what does what:
 |---|---|
 | Plan a change, then have it built and reviewed task group by task group | `/opsx-propose <change>`, then `/opsx-apply-review <change>` |
 | Check a finished change against its plan before closing it | `/opsx-verify-review <change>`, then `/opsx-archive` |
+| Check that your setup works, right after installing | `/scout-review` (or `/scout-review src` for one folder) |
 | Make a small change with a review, no plan | `/build-review add a --dry-run flag` |
 | Review a PR, yours or someone else's | `/parallel-review` (see [Reviewing a PR](#reviewing-a-pr)) |
 | Research a question, clean up code, get several opinions | `/parallel-research`, `/parallel-cleanup`, `/council` |
@@ -37,7 +40,8 @@ git clone https://github.com/danctorres/pi-setup ~/repos/pi-setup
 ```
 
 You can clone it anywhere; the commands below assume `~/repos/pi-setup`. `install.sh` installs pi,
-pi-subagents, modelcmp and OpenSpec if they are missing, and puts `pi-model-sync` and `pi-pane` in
+pi-subagents, pi-web-access, modelcmp and OpenSpec if they are missing, sets every subagent to load
+pi-web-access's web tools, and puts `pi-model-sync` and `pi-pane` in
 `~/.local/bin` (make sure that's on your `PATH`). It is safe to run again.
 
 **Log in to a model provider.** Start `pi` and run `/login`. Use an API key, or an
@@ -86,6 +90,9 @@ pi --approve
 `--approve` trusts the repo's `.pi/` folder for this run. Without it pi asks first, and if you decline it
 ignores the model choices and prompts this setup adds.
 
+The first time, run `/scout-review`. A scout summarises the repo and a reviewer says what it missed. If
+both answer, your logins, models and subagents work.
+
 ### Plan-first changes with OpenSpec
 
 1. `/opsx-propose add-dark-mode`: the lead asks what you want, then writes
@@ -106,15 +113,15 @@ New to OpenSpec? `/opsx-onboard` walks you through one full cycle.
 ### Workflows
 
 A workflow is a short script that runs subagents in a fixed order. The `/build-review`,
-`/opsx-apply-review` and `/opsx-verify-review` prompts run them for you. To run one directly, ask the
-lead, e.g. "run `./workflows/scout-review.js` with args `{target: "src"}`".
+`/opsx-apply-review`, `/opsx-verify-review` and `/scout-review` prompts run them for you, so you
+shouldn't need to run one directly.
 
 | Workflow | Args | What it does |
 |---|---|---|
 | `build-review.js` | `{task}` | worker makes the change and runs the tests, reviewer returns PASS or FAIL; used by `/build-review` |
 | `opsx-apply.js` | `{change, group}` | one OpenSpec task group, used by `/opsx-apply-review` |
 | `opsx-verify.js` | `{change}` | whole-change check, used by `/opsx-verify-review` |
-| `scout-review.js` | `{target}` | scout summarises a folder, reviewer says what it missed; a quick check that your setup works |
+| `scout-review.js` | `{target}` | scout summarises a folder, reviewer says what it missed; a quick check that your setup works; used by `/scout-review` |
 
 ### Reviewing a PR
 
@@ -171,12 +178,18 @@ Repos pick up changes to existing workflows and prompts straight away, since the
 
 ## Troubleshooting
 
+- **`404 {"error":{"message":"Not Found"…`** from a subagent on an `openrouter/anthropic/…` model: your
+  `~/.pi/agent/models.json` probably sets `baseUrl` on the whole `openrouter` provider. pi sends Claude models
+  to OpenRouter in Anthropic's format at a different URL, which that setting breaks. Remove the provider's
+  `baseUrl` and `api` (put them on your own model entries instead), or delete the entry if pi already has the model.
+- **`researcher` fails with "these child tools were unavailable: web_search…"**: run `install.sh` again. It
+  installs pi-web-access and sets subagents to load it.
 - **"Third-party apps now draw from your extra usage"**: a subagent's model goes through a Claude
   subscription login. Log in with an API key or OpenRouter instead, then run `pi-model-sync`.
 - **`pi-model-sync: worker and reviewer are both …`**: your logins only reach one good model, so the review
   is not a second opinion. Log in to another provider (OpenRouter is the quick way) and run `pi-model-sync`.
 - **`pi-model-sync: no … model on pi`**: none of your logins reach a model for that task and tier, so that
   subagent keeps its default model. Log in to another provider or change the tier in `.pi/subagent-models`.
-- **`/build-review` or the `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run `init-repo.sh` in
+- **`/build-review`, `/scout-review` or the `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run `init-repo.sh` in
   that repo.
 - **A workflow says it needs args**: pass them as shown in the [Workflows](#workflows) table.

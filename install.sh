@@ -5,6 +5,11 @@ here=$(cd "$(dirname "$0")" && pwd)
 for c in npm jq cargo; do command -v $c >/dev/null || { echo "install.sh: $c is needed first" >&2; exit 1; }; done
 command -v pi >/dev/null || npm i -g @earendil-works/pi-coding-agent
 pi list 2>/dev/null | grep -q pi-subagents || pi install npm:pi-subagents
+pi list 2>/dev/null | grep -q pi-web-access || pi install npm:pi-web-access
+# researcher and evidence-auditor need its web tools, and subagents started in the foreground don't load
+# pi's extensions, so load it in every subagent. (A repo's agentOverrides replace user ones, so not there.)
+s=~/.pi/agent/settings.json w=~/.pi/agent/npm/node_modules/pi-web-access
+jq --arg w "$w" '.subagents.defaultSubagentOnlyExtensions = ((.subagents.defaultSubagentOnlyExtensions // []) - [$w] + [$w])' "$s" > "$s.tmp" && mv "$s.tmp" "$s"
 command -v modelcmp >/dev/null || cargo install --locked --git https://github.com/danctorres/modelcmp
 command -v openspec >/dev/null || npm i -g @fission-ai/openspec
 mkdir -p ~/.local/bin
