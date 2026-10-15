@@ -10,4 +10,4 @@ const build = await runs.run("build", { agent: "worker", task: `Implement task g
   .then(r => ({ ok: true, output: r.output }), e => ({ ok: false, output: String(e) }));
 const check = await runs.run("check", { agent: "reviewer", task: `Review the uncommitted changes (watchdog_diff) against ${where}/specs/ and task group ${args.group} of ${where}/tasks.md. Do not edit. Verdict "block" if any P0.\n\nWhat the builder reported:\n` + build.output, outputSchema: review });
 const v = check.structuredOutput;
-return { verdict: build.ok && v.verdict === "ok" ? "PASS" : "FAIL", tests: !args.test ? "not run" : build.ok ? "passed" : "failed", build: build.ok ? "ok" : build.output, findings: v.findings };
+return { verdict: build.ok && v.verdict === "ok" ? "PASS" : "FAIL", tests: !args.test ? "not run" : build.ok ? "passed" : "failed", build: build.output, findings: v.findings };
