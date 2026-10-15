@@ -26,7 +26,7 @@ What's in here, and what does what:
 | Check a finished change against its plan before closing it | `/opsx-verify-review <change>`, then `/opsx-archive` |
 | Check that your setup works, right after installing | `/scout-review` (or `/scout-review src` for one folder) |
 | Make a change with reviews and fixes, no plan | `/review-loop add a --dry-run flag` (see [Changes without a plan](#changes-without-a-plan)) |
-| Review a PR, yours or someone else's | `/parallel-review` (see [Reviewing a PR](#reviewing-a-pr)) |
+| Review a commit, a branch or a PR | `/review-diff PR 123` (see [Reviewing changes](#reviewing-changes)) |
 | Research a question, clean up code, get several opinions | `/parallel-research`, `/parallel-cleanup`, `/council` |
 | Hand one task to a separate, visible pi session | `pi-pane` in a shell (see [pi-pane](#pi-pane)) |
 
@@ -133,16 +133,24 @@ directly.
 | `opsx-verify.js` | `{change}` | whole-change check, used by `/opsx-verify-review` |
 | `scout-review.js` | `{target}` | scout summarises a folder, reviewer says what it missed; a quick check that your setup works; used by `/scout-review` |
 
-### Reviewing a PR
+### Reviewing changes
 
-```sh
-gh pr checkout 123
-gh pr diff 123 > /tmp/pr-123.diff
-```
+`/review-diff` has three reviewers look at a change from different angles, then sums up what to fix. It
+fixes nothing unless you ask.
 
-Then in pi: `/parallel-review PR 123, diff at /tmp/pr-123.diff`. The reviewer can't run git and only
-sees uncommitted changes on its own, so give it the diff as a file. The checkout lets it read the
-surrounding code.
+| You type | Reviews |
+|---|---|
+| `/review-diff` | all uncommitted changes, staged or not |
+| `/review-diff unstaged` | only the unstaged changes |
+| `/review-diff commit abc123` | one commit |
+| `/review-diff branch` (or `branch develop`) | the current branch against the default branch (or `develop`) |
+| `/review-diff PR 123` | a GitHub PR; checks it out first, so it needs `gh` and a clean working tree |
+
+The reviewers can't run git and only see uncommitted changes on their own, so the lead writes the diff
+to a temporary file for them. They read the code around it from your working tree, so for an old commit
+they see today's code rather than that commit's.
+
+To review a worktree, start pi inside it and run `/review-diff`.
 
 ### pi-pane
 
