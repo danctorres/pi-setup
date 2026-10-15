@@ -27,7 +27,7 @@ pi-model-sync      # refresh the models when prices or benchmarks move
 pi --approve       # start the lead, inside herdr
 ```
 
-Then `/opsx-propose <change>`, `/opsx-apply`, `/opsx-verify-review <change>`, `/opsx-archive`.
+Then `/opsx-propose <change>`, `/opsx-apply-review <change>`, `/opsx-verify-review <change>`, `/opsx-archive`.
 
 To run a workflow, ask the lead to call the subagent tool with it, e.g.
 "run `./workflows/build-review.js` with args `{task: \"add a --dry-run flag\"}`".
@@ -70,7 +70,8 @@ the surrounding code.
 | `workflows/build-review.js` | any change, args `{task}`: worker builds, reviewer returns PASS or FAIL |
 | `workflows/opsx-apply.js` | one OpenSpec task group: worker builds, reviewer returns PASS or FAIL |
 | `workflows/opsx-verify.js` | a finished OpenSpec change, args `{change}`: reviewer checks code against the artifacts, PASS or FAIL |
+| `prompts/opsx-apply-review.md` | `/opsx-apply-review <change>`: runs `opsx-apply.js` per group, commits each PASS; use it in place of `/opsx-apply` |
 | `prompts/opsx-verify-review.md` | `/opsx-verify-review <change>`: runs `opsx-verify.js`, use it in place of `/opsx-verify` |
 
-Known gap: `/opsx-apply` treats the `operations.apply.guidance` from `init-repo.sh` as optional advice and
-implements the tasks itself. To get worker + reviewer per group, ask the lead to run `opsx-apply.js` per group.
+`/opsx-apply` treats the `operations.apply.guidance` from `init-repo.sh` as optional advice and implements
+the tasks itself, so use `/opsx-apply-review` instead.
