@@ -102,10 +102,11 @@ both answer, your logins, models and subagents work.
 1. `/opsx-propose add-dark-mode`: the lead asks what you want, then writes
    `openspec/changes/add-dark-mode/` with `proposal.md`, specs and `tasks.md`. Read them and edit
    anything that's wrong; `/opsx-explore` helps if you want to think it through first.
-2. `/opsx-apply-review add-dark-mode`: for each task group, the worker builds it, pi runs the project's
-   tests, and the reviewer checks the diff against the specs. On PASS the lead ticks the tasks and commits
+2. `/opsx-apply-review add-dark-mode`: start with no uncommitted changes outside the change's folder; the
+   lead commits the plan first. For each task group, the worker builds it, pi runs the project's tests, and
+   if they pass the reviewer checks the diff against the specs. On PASS the lead ticks the tasks and commits
    that group. On FAIL (a finding that blocks, or failing tests) it stops and shows you why, with the
-   changes left uncommitted for you to fix or retry.
+   changes left uncommitted. Fix them and commit, or discard them and run it again.
 3. `/opsx-verify-review add-dark-mode`: a reviewer checks the whole change against its plan and lists
    findings as P0 (must fix), P1 and P2.
 4. `/opsx-archive add-dark-mode`: archives the change, offering first to merge its specs into `openspec/specs/`.

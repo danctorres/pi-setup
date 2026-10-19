@@ -8,6 +8,6 @@ const review = { type: "object", additionalProperties: false, required: ["verdic
 // gate: pi runs the command after the worker and fails the run if it fails; the reviewer can't run tests.
 const build = await runs.run("build", { agent: "worker", task: `Implement task group ${args.group} of ${where}/tasks.md and nothing else. Read ${where}/proposal.md, design.md and specs/ first. Run the tests. Do not tick checkboxes. End with the files you changed.`, ...(args.test ? { gate: args.test } : {}) })
   .then(r => ({ ok: true, output: r.output }), e => ({ ok: false, output: String(e) }));
-const check = await runs.run("check", { agent: "reviewer", task: `Review the uncommitted changes (watchdog_diff) against ${where}/specs/ and task group ${args.group} of ${where}/tasks.md. Do not edit. Verdict "block" if any P0.\n\nWhat the builder reported:\n` + build.output, outputSchema: review });
-const v = check.structuredOutput;
+// A failed build is FAIL anyway and gets reviewed on the retry, so skip the reviewer.
+const v = !build.ok ? { findings: [] } : (await runs.run("check", { agent: "reviewer", task: `Review the uncommitted changes (watchdog_diff) against ${where}/specs/ and task group ${args.group} of ${where}/tasks.md. Do not edit. Verdict "block" if any P0.\n\nWhat the builder reported:\n` + build.output, outputSchema: review })).structuredOutput;
 return { verdict: build.ok && v.verdict === "ok" ? "PASS" : "FAIL", tests: !args.test ? "not run" : build.ok ? "passed" : "failed", build: build.output, findings: v.findings };
