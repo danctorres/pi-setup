@@ -106,7 +106,8 @@ both answer, your logins, models and subagents work.
    lead commits the plan first. For each task group, the worker builds it, pi runs the project's tests, and
    if they pass the reviewer checks the diff against the specs. On PASS the lead ticks the tasks and commits
    that group. On FAIL (a finding that blocks, or failing tests) it stops and shows you why, with the
-   changes left uncommitted. Fix them and commit, or discard them and run it again.
+   changes left uncommitted. Fix them, tick that group's tasks in `tasks.md` and commit, or discard them
+   and run it again.
 3. `/opsx-verify-review add-dark-mode`: a reviewer checks the whole change against its plan and lists
    findings as P0 (must fix), P1 and P2.
 4. `/opsx-archive add-dark-mode`: archives the change, offering first to merge its specs into `openspec/specs/`.
@@ -137,8 +138,8 @@ directly.
 
 ### Reviewing changes
 
-`/review-diff` has three reviewers look at a change from different angles (one for a small change), then sums up what to fix. It
-fixes nothing unless you ask.
+`/review-diff` has three reviewers look at a change from different angles (one for a small change), then
+sums up what to fix. It fixes nothing unless you ask.
 
 | You type | Reviews |
 |---|---|
