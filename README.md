@@ -126,15 +126,8 @@ for a single pass.
 
 ### Workflows
 
-A workflow is a short script that runs subagents in a fixed order. The `/opsx-apply-review`,
-`/opsx-verify-review` and `/scout-review` prompts run them for you, so you shouldn't need to run one
-directly.
-
-| Workflow | Args | What it does |
-|---|---|---|
-| `opsx-apply.js` | `{change, group, test?}` | one OpenSpec task group; pi runs `test` after the worker; used by `/opsx-apply-review` |
-| `opsx-verify.js` | `{change}` | whole-change check, used by `/opsx-verify-review` |
-| `scout-review.js` | `{target}` | scout summarises a folder, reviewer says what it missed; a quick check that your setup works; used by `/scout-review` |
+A workflow is a short script in `workflows/` that runs subagents in a fixed order. The
+`/opsx-apply-review`, `/opsx-verify-review` and `/scout-review` prompts run them for you.
 
 ### Reviewing changes
 
@@ -188,12 +181,9 @@ To choose differently for one repo, create `.pi/subagent-models` with one `role 
 (e.g. `worker coding high`) and run `pi-model-sync`. To pin an exact model, edit `.pi/settings.json` and
 don't run `pi-model-sync` afterwards.
 
-`/model` saves the lead to `~/.pi/agent/settings.json`, which the repo's `.pi/settings.json` overrides, so
-in a synced repo your `/model` pick lasts until pi restarts. To keep your own lead there, create
-`.pi/subagent-models` without a `lead` line and delete `defaultProvider` and `defaultModel` from
-`.pi/settings.json`. pi-subagents has more subagents (`delegate`, `claude-code`,
-`codex-exec`, `cursor-agent`), which keep their defaults; see
-`~/.pi/agent/npm/node_modules/pi-subagents/agents/`.
+In a synced repo, a `/model` pick lasts only until pi restarts, since `.pi/settings.json` overrides it. To
+keep your own lead, list every role but `lead` in `.pi/subagent-models` and delete `defaultProvider` and
+`defaultModel` from `.pi/settings.json`.
 
 ## Updating
 
@@ -221,4 +211,3 @@ Repos pick up changes to existing workflows and prompts straight away, since the
 - **`/scout-review` or the `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run
   `init-repo.sh` in that repo.
 - **Something else about subagents seems off**: run `/subagents-doctor` in pi.
-- **A workflow says it needs args**: pass them as shown in the [Workflows](#workflows) table.
