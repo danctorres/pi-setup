@@ -11,7 +11,7 @@ What's in here, and what does what:
 - [pi-subagents](https://www.npmjs.com/package/pi-subagents) runs the subagents (worker, reviewer, scout, …).
 - [pi-web-access](https://www.npmjs.com/package/pi-web-access) gives the `researcher` and `evidence-auditor`
   subagents web search and page fetching, with no API key needed.
-- [modelcmp](https://github.com/danctorres/modelcmp) picks each subagent's model from current prices
+- [modelcmp](https://github.com/danctorres/modelcmp) picks the lead's and each subagent's model from current prices
   and benchmarks, out of the models your pi logins can reach.
 - [OpenSpec](https://www.npmjs.com/package/@fission-ai/openspec) makes bigger changes plan-first: a
   written proposal, specs and a task list, then the code.
@@ -72,7 +72,7 @@ This:
   `/opsx-*` prompts in `.pi/prompts/`
 - links this repo's `workflows/*.js` into `workflows/` and its prompts into `.pi/prompts/`, and adds those
   links to `.gitignore` (they point into your checkout, so they don't belong in git)
-- writes each subagent's model into `.pi/settings.json` (see [Models](#models))
+- writes the lead's and each subagent's model into `.pi/settings.json` (see [Models](#models))
 
 Commit `openspec/`, `.pi/skills/`, OpenSpec's `.pi/prompts/opsx-*.md` and `.gitignore`. Everyone else on
 the repo runs `init-repo.sh` once to get their own links and models. Leave `.pi/settings.json` out of git
@@ -90,8 +90,9 @@ pi --approve
 `--approve` trusts the repo's `.pi/` folder for this run. Without it pi asks first, and if you decline it
 ignores the model choices and prompts this setup adds.
 
-The lead drives everything else, so give it a capable model with `/model`. A free one gets there, but
-fumbles tool calls and skips steps such as committing each task group separately.
+The lead drives everything else, so it needs a capable model: a free one gets there, but fumbles tool
+calls and skips steps such as committing each task group separately. `init-repo.sh` picks one for you
+(see [Models](#models)).
 
 The first time, run `/scout-review`. A scout summarises the repo and a reviewer says what it missed. If
 both answer, your logins, models and subagents work.
@@ -167,12 +168,13 @@ Its session is saved like any other pi session, so `/resume` in that repo finds 
 
 ## Models
 
-`pi-model-sync` asks modelcmp for the best model per subagent and writes it into `.pi/settings.json`.
+`pi-model-sync` asks modelcmp for the best model for the lead and each subagent and writes them into `.pi/settings.json`.
 `init-repo.sh` runs it for you; run it again when prices or benchmarks change, or after you log in to a
 new provider. `pi-model-sync ~/.pi/agent/settings.json` sets the models for every repo instead.
 
-| Subagent | What it does | modelcmp task/tier |
+| Role | What it does | modelcmp task/tier |
 |---|---|---|
+| `lead` | the pi session you talk to, hands work out and checks it is done | agentic/high |
 | `scout` | fast look around the codebase, hands a short summary on | value/low |
 | `worker` | writes the code | coding/mid |
 | `reviewer` | read-only review, P0/P1/P2 findings and a merge verdict | reasoning/high |
@@ -180,9 +182,14 @@ new provider. `pi-model-sync ~/.pi/agent/settings.json` sets the models for ever
 | `researcher` | web research brief | agentic/mid |
 | `evidence-auditor` | checks research claims against their sources | reasoning/mid |
 
-To choose differently for one repo, create `.pi/subagent-models` with one `subagent task tier` per line
+To choose differently for one repo, create `.pi/subagent-models` with one `role task tier` per line
 (e.g. `worker coding high`) and run `pi-model-sync`. To pin an exact model, edit `.pi/settings.json` and
-don't run `pi-model-sync` afterwards. pi-subagents has more subagents (`delegate`, `claude-code`,
+don't run `pi-model-sync` afterwards.
+
+`/model` saves the lead to `~/.pi/agent/settings.json`, which the repo's `.pi/settings.json` overrides, so
+in a synced repo your `/model` pick lasts until pi restarts. To keep your own lead there, create
+`.pi/subagent-models` without a `lead` line and delete `defaultProvider` and `defaultModel` from
+`.pi/settings.json`. pi-subagents has more subagents (`delegate`, `claude-code`,
 `codex-exec`, `cursor-agent`), which keep their defaults; see
 `~/.pi/agent/npm/node_modules/pi-subagents/agents/`.
 

@@ -1,12 +1,13 @@
 #!/bin/sh
-# Set each pi-subagents role's model to modelcmp's pick for its task and tier.
+# Set the lead's model and each pi-subagents role's to modelcmp's pick for its task and tier.
 #   pi-model-sync [settings.json]    default .pi/settings.json (this repo); ~/.pi/agent/settings.json for every repo
 # Roles come from .pi/subagent-models when it exists ("role task tier" per line), else the table below.
 set -eu
 f=${1:-.pi/settings.json}
 mkdir -p "$(dirname "$f")"
 [ -s "$f" ] || echo '{}' > "$f"
-if [ -f .pi/subagent-models ]; then roles=$(grep '^[a-z]' .pi/subagent-models) || { echo "pi-model-sync: no roles in .pi/subagent-models" >&2; exit 1; }; else roles='scout value low
+if [ -f .pi/subagent-models ]; then roles=$(grep '^[a-z]' .pi/subagent-models) || { echo "pi-model-sync: no roles in .pi/subagent-models" >&2; exit 1; }; else roles='lead agentic high
+scout value low
 worker coding mid
 reviewer reasoning high
 oracle reasoning high
@@ -15,7 +16,9 @@ evidence-auditor reasoning mid'; fi
 echo "$roles" | while read -r role task tier; do
   id=$(modelcmp list --task "$task" --tier "$tier" --via pi --id 2>/dev/null | head -1)
   if [ -z "$id" ]; then echo "pi-model-sync: no $task $tier model on pi, $role keeps its model" >&2; continue; fi
-  jq --arg r "$role" --arg m "$id" '.subagents.agentOverrides[$r].model = $m' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+  # the lead is pi's own model, saved as a provider and that provider's id: openrouter + x/y
+  if [ "$role" = lead ]; then jq --arg p "${id%%/*}" --arg m "${id#*/}" '.defaultProvider = $p | .defaultModel = $m' "$f" > "$f.tmp"
+  else jq --arg r "$role" --arg m "$id" '.subagents.agentOverrides[$r].model = $m' "$f" > "$f.tmp"; fi && mv "$f.tmp" "$f"
   echo "$role  $task/$tier  $id"
 done
 w=$(jq -r '.subagents.agentOverrides.worker.model // empty' "$f") r=$(jq -r '.subagents.agentOverrides.reviewer.model // empty' "$f")
