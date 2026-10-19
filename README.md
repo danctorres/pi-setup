@@ -136,7 +136,7 @@ directly.
 
 ### Reviewing changes
 
-`/review-diff` has three reviewers look at a change from different angles, then sums up what to fix. It
+`/review-diff` has three reviewers look at a change from different angles (one for a small change), then sums up what to fix. It
 fixes nothing unless you ask.
 
 | You type | Reviews |

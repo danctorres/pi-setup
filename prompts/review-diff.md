@@ -14,8 +14,9 @@ to a new temporary file (made with `mktemp`) yourself:
 - empty: write no file; the reviewers use their own diff tool.
 If the diff is empty, say so and stop.
 
-Then launch three reviewer subagents in parallel, with fresh context, each with a distinct angle you pick for
-this change (for example correctness, tests, simplicity). Give each the diff file's path and tell it that the
+Then launch reviewer subagents in parallel: one for a small diff (under ~100 changed lines), otherwise three,
+each with fresh context and a distinct angle you pick for this change (for example correctness, tests,
+simplicity; a single reviewer covers all of them). Give each the diff file's path and tell it that the
 file is the change under review and the working tree holds the surrounding code. Ask for evidence-backed
 findings with file and line, labelled P0 (blocks merge), P1 or P2, ending with `Merge verdict: BLOCK`,
 `Merge verdict: OK` or `Merge verdict: OK with notes`, or exactly `No issues found.` Reviewers must not edit
