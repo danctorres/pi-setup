@@ -9,7 +9,8 @@ the message "$1: plan". Find the command that runs this project's tests (package
 config). Then read openspec/changes/$1/tasks.md and, for each task group that still has unticked tasks, one
 group at a time and in order (finish step 2's commit before starting the next group):
 1. Call the subagent tool with workflow "./workflows/opsx-apply.js", args {change: "$1", group: <group number>,
-   test: "<the test command>"} (leave test out if the project has no tests) and async false, and no other fields.
+   test: "<the test command>"} (leave test out if the project has no tests),
+   async false and options {timeoutMs: 3600000}, and no other fields.
 2. If the verdict is PASS, tick that group's tasks in tasks.md and, once that edit is done, commit everything
    (`git add -A`) with the message "$1: task group <n>".
 3. If the verdict is FAIL, stop. Leave the changes uncommitted and give every finding. If tests is "failed",
