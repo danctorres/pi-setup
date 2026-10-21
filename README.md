@@ -200,14 +200,8 @@ Repos pick up changes to existing workflows and prompts straight away, since the
   `~/.pi/agent/models.json` probably sets `baseUrl` on the whole `openrouter` provider. pi sends Claude models
   to OpenRouter in Anthropic's format at a different URL, which that setting breaks. Remove the provider's
   `baseUrl` and `api` (put them on your own model entries instead), or delete the entry if pi already has the model.
-- **`researcher` fails with "these child tools were unavailable: web_search…"**: run `install.sh` again. It
-  installs pi-web-access and sets subagents to load it.
 - **"Third-party apps now draw from your extra usage"**: a subagent's model goes through a Claude
   subscription login. Log in with an API key or OpenRouter instead, then run `pi-model-sync`.
-- **`pi-model-sync: worker and reviewer are both …`**: your logins only reach one good model, so the review
-  is not a second opinion. Log in to another provider (OpenRouter is the quick way) and run `pi-model-sync`.
-- **`pi-model-sync: no … model on pi`**: none of your logins reach a model for that task and tier, so that
-  subagent keeps its default model. Log in to another provider or change the tier in `.pi/subagent-models`.
 - **`/scout-review` or the `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run
   `init-repo.sh` in that repo.
 - **Something else about subagents seems off**: run `/subagents-doctor` in pi.
