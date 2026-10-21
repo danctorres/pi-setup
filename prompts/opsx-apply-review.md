@@ -13,6 +13,7 @@ group at a time and in order (finish step 2's commit before starting the next gr
    async false and options {timeoutMs: 3600000}, and no other fields.
 2. If the verdict is PASS, tick that group's tasks in tasks.md and, once that edit is done, commit everything
    (`git add -A`) with the message "$1: task group <n>".
-3. If the verdict is FAIL, stop. Leave the changes uncommitted and give every finding. If tests is "failed",
-   run the tests and show what failed (the reviewer is skipped then, so there are no findings).
+3. If the verdict is FAIL, stop. Leave the changes uncommitted and give every finding. If there is an error,
+   the build failed and the reviewer was skipped: give the error and the worker's report (build), then run
+   the tests and show what failed.
 When every group has passed, say so and suggest /opsx-verify-review $1.
