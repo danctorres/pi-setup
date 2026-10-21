@@ -31,7 +31,7 @@ const [build] = await runs.all([
   {
     key: "build",
     agent: "worker",
-    task: `Implement task group ${args.group} of ${where}/tasks.md and nothing else. Read ${where}/proposal.md, design.md and specs/ first. Run the tests. Do not tick checkboxes. If you need a decision (for example, the plan contradicts itself), do not ask or wait for one: stop and end with the question. End with the files you changed.`,
+    task: `Implement task group ${args.group} of ${where}/tasks.md and nothing else. Read ${where}/proposal.md, design.md (if there) and specs/ first. Run the tests. Do not tick checkboxes. If you need a decision (for example, the plan contradicts itself), do not ask or wait for one: stop and end with the question. End with the files you changed.`,
     ...(args.test ? { gate: args.test } : {}),
   },
 ]);
