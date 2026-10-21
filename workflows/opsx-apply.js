@@ -32,7 +32,8 @@ const build = await runs
     ...(args.test ? { gate: args.test } : {}),
   })
   .then(
-    (r) => ({ ok: true, output: r.output }),
+    // A failed build rejects, but a stopped one resolves with ok false.
+    (r) => ({ ok: r.ok, output: r.output }),
     (e) => ({ ok: false, output: String(e) }),
   );
 // A failed build is FAIL anyway and gets reviewed on the retry, so skip the reviewer.
