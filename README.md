@@ -181,6 +181,9 @@ To choose differently for one repo, create `.pi/subagent-models` with one `role 
 (e.g. `worker coding high`) and run `pi-model-sync`. To pin an exact model, edit `.pi/settings.json` and
 don't run `pi-model-sync` afterwards.
 
+To run a role on a model on your machine, add ollama or llama.cpp to pi ([modelcmp's guide](https://github.com/danctorres/modelcmp/blob/main/REFERENCE.md#models-on-your-machine)),
+make it your favorite for the role's task (`modelcmp fav value qwen3.5-4b`) and run `pi-model-sync`.
+
 In a synced repo, a `/model` pick lasts only until pi restarts, since `.pi/settings.json` overrides it. To
 keep your own lead, list every role but `lead` in `.pi/subagent-models` and delete `defaultProvider` and
 `defaultModel` from `.pi/settings.json`.
@@ -202,6 +205,9 @@ Repos pick up changes to existing workflows and prompts straight away, since the
   `baseUrl` and `api` (put them on your own model entries instead), or delete the entry if pi already has the model.
 - **"Third-party apps now draw from your extra usage"**: a subagent's model goes through a Claude
   subscription login. Log in with an API key or OpenRouter instead, then run `pi-model-sync`.
+- **A subagent on an `ollama/…` model writes a command instead of running it**: ollama gives it 4096 tokens
+  of context, too few for pi's prompt and tools. Set `OLLAMA_CONTEXT_LENGTH=16384` where ollama serves
+  ([modelcmp's guide](https://github.com/danctorres/modelcmp/blob/main/REFERENCE.md#models-on-your-machine)).
 - **`/scout-review` or the `/opsx-*-review` prompts are missing in pi**: start pi with `--approve`, and run
   `init-repo.sh` in that repo.
 - **Something else about subagents seems off**: run `/subagents-doctor` in pi.
